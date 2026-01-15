@@ -1,15 +1,16 @@
 'use client'
 
 import { Calendar, User, Info, CheckCircle2, Briefcase, Map, Flag, ArrowUpRight } from 'lucide-react'
+import { Project } from '@/lib/types'
 import { StatusUpdater } from './StatusUpdater'
 import { DeleteProjectButton } from './DeleteProjectButton'
 
 interface ProjectCardProps {
-    project: any
+    project: Project
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-    const statusMap: Record<string, { label: string, color: string, icon: any }> = {
+    const statusMap: Record<string, { label: string, color: string, icon: React.ComponentType<{ className?: string }> }> = {
         planned: { label: 'Planifié', color: 'bg-slate-100 text-slate-700', icon: Calendar },
         in_progress: { label: 'En cours', color: 'bg-indigo-50 text-indigo-700', icon: CheckCircle2 },
         completed: { label: 'Terminé', color: 'bg-emerald-50 text-emerald-700', icon: CheckCircle2 },
@@ -37,7 +38,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                             <Flag className="w-3 h-3 mr-1.5" />
                             {priority.label}
                         </span>
-                        <DeleteProjectButton id={project.id} projectTitle={project.culture_type} />
+                        <DeleteProjectButton id={project.id} projectTitle={project.culture_type || ''} />
                     </div>
                 </div>
 

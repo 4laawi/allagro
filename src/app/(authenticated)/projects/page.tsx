@@ -8,9 +8,11 @@ import { ProjectStats } from '@/components/projects/ProjectStats'
 import { ProjectFilters } from '@/components/projects/ProjectFilters'
 import { ProjectCard } from '@/components/projects/ProjectCard'
 
+import { Project, Client } from '@/lib/types'
+
 export default function ProjectsPage() {
-    const [projects, setProjects] = useState<any[]>([])
-    const [clients, setClients] = useState<any[]>([])
+    const [projects, setProjects] = useState<Project[]>([])
+    const [clients, setClients] = useState<{ id: string, name: string }[]>([])
     const [loading, setLoading] = useState(true)
 
     // Filter states
@@ -28,8 +30,8 @@ export default function ProjectsPage() {
                 supabase.from('clients').select('id, name').order('name')
             ])
 
-            setProjects(projectsRes.data || [])
-            setClients(clientsRes.data || [])
+            setProjects((projectsRes.data as Project[]) || [])
+            setClients((clientsRes.data as { id: string, name: string }[]) || [])
             setLoading(false)
         }
         fetchData()
@@ -38,8 +40,8 @@ export default function ProjectsPage() {
     const filteredProjects = useMemo(() => {
         return projects.filter(project => {
             const matchesSearch =
-                project.culture_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                project.clients?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+                (project.culture_type?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+                (project.clients?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
 
             const matchesStatus = statusFilter === 'all' || project.status === statusFilter
             const matchesPriority = priorityFilter === 'all' || project.priority === priorityFilter
@@ -93,7 +95,7 @@ export default function ProjectsPage() {
                 {/* Grid of Projects */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                     {filteredProjects.length > 0 ? (
-                        filteredProjects.map((project: any) => (
+                        filteredProjects.map((project) => (
                             <ProjectCard key={project.id} project={project} />
                         ))
                     ) : (

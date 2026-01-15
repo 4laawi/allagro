@@ -5,14 +5,16 @@ import { OrderStatusUpdater } from '@/components/orders/OrderStatusUpdater'
 import { OrderStats } from '@/components/orders/OrderStats'
 import { cn } from '@/lib/utils'
 
-async function getOrders() {
+import { Order } from '@/lib/types'
+
+async function getOrders(): Promise<Order[]> {
     const supabase = await createClient()
     const { data: orders } = await supabase
         .from('orders')
         .select('*, clients(name)')
         .order('created_at', { ascending: false })
 
-    return orders || []
+    return (orders as Order[]) || []
 }
 
 async function getClients() {
@@ -28,7 +30,7 @@ async function getClients() {
 export default async function OrdersPage() {
     const [orders, clients] = await Promise.all([getOrders(), getClients()])
 
-    const statusMap: Record<string, { label: string, color: string, icon: any }> = {
+    const statusMap: Record<string, { label: string, color: string, icon: React.ComponentType<{ className?: string }> }> = {
         pending: { label: 'En attente', color: 'bg-amber-100 text-amber-700', icon: Clock },
         validated: { label: 'Validée', color: 'bg-indigo-100 text-indigo-700', icon: CheckCircle2 },
         delivered: { label: 'Livrée', color: 'bg-emerald-100 text-emerald-700', icon: Truck },
@@ -75,7 +77,7 @@ export default async function OrdersPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {orders.length > 0 ? (
-                                orders.map((order: any) => (
+                                orders.map((order) => (
                                     <tr key={order.id} className="hover:bg-slate-50/80 transition-all group">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">

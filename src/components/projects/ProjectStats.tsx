@@ -2,8 +2,10 @@
 
 import { Briefcase, Clock, CheckCircle2, TrendingUp } from 'lucide-react'
 
+import { Project } from '@/lib/types'
+
 interface ProjectStatsProps {
-    projects: any[]
+    projects: Project[]
 }
 
 export function ProjectStats({ projects }: ProjectStatsProps) {
